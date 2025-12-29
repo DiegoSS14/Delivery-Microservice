@@ -1,12 +1,16 @@
 package com.diego.delivery.delivery.tracking.domain.model;
 
+import lombok.EqualsAndHashCode;
+
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Delivery {
+    @EqualsAndHashCode.Include
     private UUID id;
 
     private UUID courierId;
