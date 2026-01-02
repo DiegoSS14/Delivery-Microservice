@@ -61,7 +61,7 @@ public class Delivery {
         claculateTotalItems();
     }
 
-    public void changeItemQuantity(UUID itemId,Integer quantity) {
+    public void changeItemQuantity(UUID itemId, Integer quantity) {
         Item item = getItems().stream().filter(i -> i.getId().equals(itemId)).findFirst()
                 .orElseThrow();
 
@@ -74,6 +74,7 @@ public class Delivery {
         claculateTotalItems();
     }
 
+    // Definir detalhes de preparação
     public void editPreparationDetails(PreparationDetails details) {
         verifyIfCanBeEdited();
         setSender(details.getSender());
@@ -85,18 +86,21 @@ public class Delivery {
         setTotalCost(getDistanceFee().add(this.getCourierPayout()));
     }
 
+    // Postar item
     public void place() {
         verifyCanBePlaced();
-        this.setStatus(DeliveryStatus.WAITING_FOR_COURIER);
-        this.setPlacedAt(OffsetDateTime.now());
+        setStatus(DeliveryStatus.WAITING_FOR_COURIER);
+        setPlacedAt(OffsetDateTime.now());
     }
 
+    // Definir entregador
     public void pickUp(UUID courierId) {
-        this.setCourierId(courierId);
-        this.setStatus(DeliveryStatus.IN_TRANSIT);
-        this.setAssignedAt(OffsetDateTime.now());
+        setCourierId(courierId);
+        setStatus(DeliveryStatus.IN_TRANSIT);
+        setAssignedAt(OffsetDateTime.now());
     }
 
+    // Marcar como entregue
     public void markAsDelivered() {
         this.setStatus(DeliveryStatus.DELIVERY);
         this.setFulfilledAt(OffsetDateTime.now());
@@ -112,8 +116,8 @@ public class Delivery {
     }
 
     private void verifyCanBePlaced() {
-        if(!isFilled()) {
-            throw  new DomainException();
+        if (!isFilled()) {
+            throw new DomainException();
         }
         if (!this.getStatus().equals(DeliveryStatus.DRAFT)) {
             throw new DomainException();
@@ -142,4 +146,6 @@ public class Delivery {
         private BigDecimal courierPayout;
         private Duration expectedDeliveryTime;
     }
+
+
 }
