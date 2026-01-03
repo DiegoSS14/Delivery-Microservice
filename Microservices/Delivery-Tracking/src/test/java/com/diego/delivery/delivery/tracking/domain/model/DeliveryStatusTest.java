@@ -24,14 +24,14 @@ public class DeliveryStatusTest {
     @Test
     void draft_canChangeToDelivery() {
         assertTrue(
-            DeliveryStatus.IN_TRANSIT.canChangeTo(DeliveryStatus.DELIVERY)
+            DeliveryStatus.IN_TRANSIT.canChangeTo(DeliveryStatus.DELIVERED)
         );
     }
 
     @Test
     void draft_CanNotChangeToWaitingForCourier() {
         assertFalse(
-            DeliveryStatus.DRAFT.canChangeTo(DeliveryStatus.DELIVERY)
+            DeliveryStatus.DRAFT.canChangeTo(DeliveryStatus.DELIVERED)
         );
     }
 }
