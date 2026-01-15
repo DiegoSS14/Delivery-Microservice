@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.diego.delivery.courier.management.domain.model.Courier;
 
 public interface CourierRepository extends JpaRepository<Courier, UUID>{
-    
+    // public Page<Courier> findAll(Pageable pageable);
 }

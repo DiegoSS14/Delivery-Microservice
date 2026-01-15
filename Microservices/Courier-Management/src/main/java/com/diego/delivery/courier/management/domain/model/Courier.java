@@ -19,7 +19,7 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter(AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PACKAGE)
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Courier {
 
@@ -46,7 +46,7 @@ public class Courier {
         return Collections.unmodifiableList(this.pendingDeliveries);
     }
 
-    public Courier brandNew(String name, String phone) {
+    public static Courier brandNew(String name, String phone) {
         Courier courier = new Courier();
         courier.setId(UUID.randomUUID());
         courier.setName(name);

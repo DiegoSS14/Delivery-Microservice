@@ -9,5 +9,4 @@ public class CourierManagementApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(CourierManagementApplication.class, args);
 	}
-
 }
