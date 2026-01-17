@@ -1,7 +1,7 @@
 package com.diego.delivery.delivery.tracking.service;
 
 import java.math.BigDecimal;
-import java.sql.PreparedStatement;
+import java.math.RoundingMode;
 import java.time.Duration;
 import java.util.UUID;
 
@@ -22,8 +22,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class DeliveryPreparationService {
-    
+
     private final DeliveryRepository deliveryRepository;
+    private final DeliveryTimeEstimationService deliveryTimeEstimationService;
+    private final CourierPayoutCalculationService courierPayoutCalculationService;
 
     @Transactional
     public Delivery draft(DeliveryInput input) {
@@ -35,7 +37,7 @@ public class DeliveryPreparationService {
     @Transactional
     public Delivery edit(UUID deliveryId, DeliveryInput input) {
         Delivery delivery = deliveryRepository.findById(deliveryId)
-        .orElseThrow(() -> new DomainException());
+                .orElseThrow(() -> new DomainException());
         delivery.removeItems();
         handleDeliveryPreparation(input, delivery);
         return deliveryRepository.saveAndFlush(delivery);
@@ -46,40 +48,46 @@ public class DeliveryPreparationService {
         ContactPointInput recipientInput = input.getRecipient();
 
         ContactPoint sender = ContactPoint.builder()
-            .phone(senderInput.getPhone())
-            .name(senderInput.getName())
-            .complement(senderInput.getComplement())
-            .number(senderInput.getNumber())
-            .zipCode(senderInput.getZipCode())
-            .street(senderInput.getStreet())
-            .build();
+                .phone(senderInput.getPhone())
+                .name(senderInput.getName())
+                .complement(senderInput.getComplement())
+                .number(senderInput.getNumber())
+                .zipCode(senderInput.getZipCode())
+                .street(senderInput.getStreet())
+                .build();
 
         ContactPoint recipient = ContactPoint.builder()
-            .phone(recipientInput.getPhone())
-            .name(recipientInput.getName())
-            .complement(recipientInput.getComplement())
-            .number(recipientInput.getNumber())
-            .zipCode(recipientInput.getZipCode())
-            .street(recipientInput.getStreet())
-            .build();
+                .phone(recipientInput.getPhone())
+                .name(recipientInput.getName())
+                .complement(recipientInput.getComplement())
+                .number(recipientInput.getNumber())
+                .zipCode(recipientInput.getZipCode())
+                .street(recipientInput.getStreet())
+                .build();
 
-        Duration expectedDeliveryDateTime = Duration.ofHours(3);
-        BigDecimal distanceFee = new BigDecimal("10");
+        DeliveryEstimate estimate = deliveryTimeEstimationService.estimate(sender, recipient);
+        BigDecimal calculatedPayout = courierPayoutCalculationService.calculatePayout(estimate.getDistanceInKm());
 
-        BigDecimal payOut = new BigDecimal("10");
+        BigDecimal distanceFee = calculateFee(estimate.getDistanceInKm());
 
         PreparationDetails preparationDetails = PreparationDetails.builder()
-            .sender(sender)
-            .recipient(recipient)
-            .expectedDeliveryTime(expectedDeliveryDateTime)
-            .courierPayout(payOut)
-            .distanceFee(distanceFee)
-            .build();
+                .sender(sender)
+                .recipient(recipient)
+                .expectedDeliveryTime(estimate.getEstimatedTime())
+                .courierPayout(calculatedPayout)
+                .distanceFee(distanceFee)
+                .build();
 
         delivery.editPreparationDetails(preparationDetails);
 
-        for(ItemInput itemInput: input.getItems()) {
+        for (ItemInput itemInput : input.getItems()) {
             delivery.addItem(itemInput.getName(), itemInput.getQuantity());
         }
+    }
+
+    private BigDecimal calculateFee(Double distanceInKm) {
+        return new BigDecimal("3")
+                .multiply(new BigDecimal(distanceInKm))
+                .setScale(2, RoundingMode.HALF_EVEN);
     }
 }
