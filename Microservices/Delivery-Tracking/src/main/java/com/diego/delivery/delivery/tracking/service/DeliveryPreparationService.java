@@ -2,7 +2,6 @@ package com.diego.delivery.delivery.tracking.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Duration;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;

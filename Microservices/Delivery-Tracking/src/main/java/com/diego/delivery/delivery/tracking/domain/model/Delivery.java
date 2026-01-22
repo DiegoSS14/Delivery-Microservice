@@ -8,6 +8,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.AbstractAggregateRoot;
+
+import com.diego.delivery.delivery.tracking.domain.event.DeliveryFulfilledEvent;
+import com.diego.delivery.delivery.tracking.domain.event.DeliveryPickUpEvent;
+import com.diego.delivery.delivery.tracking.domain.event.DeliveryPlacedEvent;
 import com.diego.delivery.delivery.tracking.domain.model.exception.DomainException;
 
 import jakarta.persistence.AttributeOverride;
@@ -27,11 +32,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, callSuper = false)
 @NoArgsConstructor(access = AccessLevel.PACKAGE)
 @Setter(AccessLevel.PRIVATE)
 @Getter
-public class Delivery {
+public class Delivery extends AbstractAggregateRoot<Delivery> {
 
     @Id
     @EqualsAndHashCode.Include
@@ -129,6 +134,7 @@ public class Delivery {
         verifyCanBePlaced();
         changeStatusTo(DeliveryStatus.WAITING_FOR_COURIER);
         setPlacedAt(OffsetDateTime.now());
+        super.andEvent(new DeliveryPlacedEvent(this.getPlacedAt(), this.getId()));
     }
 
     // Definir entregador
@@ -136,12 +142,14 @@ public class Delivery {
         setCourierId(courierId);
         changeStatusTo(DeliveryStatus.IN_TRANSIT);
         setAssignedAt(OffsetDateTime.now());
+        super.andEvent(new DeliveryPickUpEvent(this.getAssignedAt(), this.getId()));
     }
 
     // Marcar como entregue
     public void markAsDelivered() {
         changeStatusTo(DeliveryStatus.DELIVERED);
         this.setFulfilledAt(OffsetDateTime.now());
+        super.andEvent(new DeliveryFulfilledEvent(this.fulfilledAt, this.getId()));
     }
 
     public List<Item> getItems() {
