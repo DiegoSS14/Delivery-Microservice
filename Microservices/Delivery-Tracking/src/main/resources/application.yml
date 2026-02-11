@@ -14,3 +14,9 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      # Fiz uma configuração manual subindo um bean no AppConfig, por isso não será necessária esse configuração
+      # properties:
+      #   spring.json.type.mapping:
+      #     delivery-placed-event:com.diego.delivery.delivery.tracking.domain.event.DeliveryPlacedEvent,
+      #     delivery-picked-up-event:com.diego.delivery.delivery.tracking.domain.event.DeliveryPickUpEvent,
+      #     delivery-fulfilled-event:com.diego.delivery.delivery.tracking.domain.event.DeliveryFulfilledEvent
