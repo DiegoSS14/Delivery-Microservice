@@ -23,3 +23,6 @@ spring:
           delivery-placed-event:com.diego.delivery.courier.management.infrastructure.events.DeliveryPlacedIntegrationEvent,
           delivery-picked-up-event:com.fasterxml.jackson.databind.JsonNode,
           delivery-fulfilled-event:com.diego.delivery.courier.management.infrastructure.events.DeliveryFullfilledIntegrationEvent
+  logging:
+  level:
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: DEBUG

@@ -56,13 +56,13 @@ public class Courier {
         return courier;
     }
 
-    void assign(UUID deliveryId) {
+    public void assign(UUID deliveryId) {
         this.pendingDeliveries.add(
                 AssignedDelivery.pending(deliveryId, this));
         this.fulfilledDeliveriesQuantity++;
     }
 
-    void fulFill(UUID deliveryId) {
+    public void fulFill(UUID deliveryId) {
         AssignedDelivery delivery = this.pendingDeliveries.stream()
                 .filter(
                         d -> d.getId().equals(deliveryId))
