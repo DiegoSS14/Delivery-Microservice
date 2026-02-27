@@ -7,14 +7,14 @@ import java.time.Duration;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.diego.delivery.delivery.tracking.domain.model.ContactPoint;
 import com.diego.delivery.delivery.tracking.domain.model.Delivery;
 
-@DataJpaTest // Implementa testes do JPA
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE) // Não cria o banco de dados automáticamente
+@SpringBootTest
+@Transactional
 public class DeliveryRepositoryTest {
 
     @Autowired

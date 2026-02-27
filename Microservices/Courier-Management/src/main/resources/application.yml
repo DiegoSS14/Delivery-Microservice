@@ -26,3 +26,11 @@ spring:
   logging:
   level:
     org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: DEBUG
+
+eureka:
+  client:
+    service-url:
+      default-zone: http://localhost:8761/eureka/
+  instance:
+    instance-id: ${random.value}
+    prefer-ip-address: true
