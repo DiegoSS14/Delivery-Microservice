@@ -26,10 +26,12 @@ import com.diego.delivery.courier.management.domain.service.CourierRegistrationS
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@RequestMapping("/api/v1/couriers")
+@RequestMapping({"/api/v1/couriers", "/api/v1/couriers/"})
 @RequiredArgsConstructor
+@Slf4j
 public class CourierManagementController {
 
     private final CourierRegistrationService courierRegistrationService;
@@ -49,6 +51,7 @@ public class CourierManagementController {
 
     @GetMapping
     public PagedModel<Courier> findAll(@PageableDefault Pageable pageable) {
+        log.info("find all request");
         return new PagedModel<>(courierRepository.findAll(pageable));
     }
 
