@@ -15,6 +15,24 @@ spring:
                 predicates:
                   - Path=/api/v1/couriers/**
                   - Method=GET,POST,PUT,PATCH,DELETE,OPTIONS
+              # É possível configurar rotas personalizadas e direcioná-las para caminhos específicos
+              # Também é possível definir filtros que modificam as informações que essas rotas fornecem, por exemplo removendo um ou mais campos de um JSON.
+              - id: courier-management-public-route
+                uri: lb://courier-management
+                predicates:
+                  - Path=/public/couriers
+                  - Method=GET
+                filters:
+                - RewritePath=/public/couriers, /api/v1/couriers
+                - RemoveJsonAttributesResponseBody=pendingDeliveruies,pendingDeliveriesQuantity,phone,true
+              - id: courier-management-public-segments-route
+                uri: lb://courier-management
+                predicates:
+                  - Path=/public/couriers/**
+                  - Method=GET
+                filters:
+                - RewritePath=/public/couriers/?(?<segment>.*), /api/v1/couriers/$\{segment}
+                - RemoveJsonAttributesResponseBody=pendingDeliveruies,pendingDeliveriesQuantity,phone,true
 eureka:
   client:
     register-with-eureka: false

@@ -1,8 +1,12 @@
 package com.diego.delivery.delivery.tracking.infrastructure.http.client;
 
+import java.time.Duration;
+
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
@@ -19,9 +23,18 @@ public class CourierApiClientConfig {
     
     @Bean // Configuração para conexão com o microsserviço externo
     public CourierApiClient courierApiClient(RestClient.Builder builder) {
-        RestClient restClient = builder.baseUrl("http://courier-management").build();
+        RestClient restClient = builder.baseUrl("http://courier-management")
+            .requestFactory(generateRequestFactory())
+            .build();
         RestClientAdapter adapter = RestClientAdapter.create(restClient);
         HttpServiceProxyFactory proxyFactory = HttpServiceProxyFactory.builderFor(adapter).build();
         return proxyFactory.createClient(CourierApiClient.class);
+    }
+
+    private ClientHttpRequestFactory generateRequestFactory() {
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(Duration.ofMillis(10));
+        factory.setReadTimeout(Duration.ofMillis(200));
+        return factory;
     }
 }
